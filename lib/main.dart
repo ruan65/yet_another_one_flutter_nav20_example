@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:navigator_v2_sample_app/book.dart';
 import 'package:navigator_v2_sample_app/fake_widgets.dart';
-
-import 'book_page.dart';
+import 'package:navigator_v2_sample_app/navigation/app_router_delegate.dart';
+import 'package:navigator_v2_sample_app/navigation/route_info_parcer.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,17 +14,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Book _selectedBook;
-
-  void _handleBookTap(Book book) {
-    setState(() {
-      _selectedBook = book;
-    });
-  }
+  final _routerDelegate = AppRouterDelegate();
+  final _routInfoParser = RouteInfoParser();
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -35,22 +30,8 @@ class _MyAppState extends State<MyApp> {
           elevation: 0,
         ),
       ),
-      home: Navigator(
-        pages: [
-          MaterialPage(child: HomePage(onBookTap: _handleBookTap)),
-          if (null != _selectedBook)
-            MaterialPage(child: BookPage(book: _selectedBook)),
-        ],
-        onPopPage: (route, result) {
-          if (!route.didPop(result)) {
-            return false;
-          }
-          setState(() {
-            _selectedBook = null;
-          });
-          return true;
-        },
-      ),
+      routerDelegate: _routerDelegate,
+      routeInformationParser: _routInfoParser,
     );
   }
 }
